@@ -35,13 +35,13 @@ const std::string::value_type* path_separators = "\\/";
 const std::string::value_type* path_separators = "/";
 #endif
 
-void make_all_directories(const std::string& path)
+void make_all_directories(const std::string_view path)
 {
-  std::vector<std::string> parts;
+  std::vector<std::string_view> parts;
   split_string(path, parts, path_separators);
 
   std::string intermediate;
-  for (const std::string& component : parts) {
+  for (const std::string_view component : parts) {
     if (component.empty()) {
       if (intermediate.empty())
         intermediate += "/";
@@ -57,9 +57,9 @@ void make_all_directories(const std::string& path)
   }
 }
 
-std::string get_file_path(const std::string& filename)
+std::string get_file_path(const std::string_view filename)
 {
-  std::string::const_reverse_iterator rit;
+  std::string_view::const_reverse_iterator rit;
   std::string res;
 
   for (rit = filename.rbegin(); rit != filename.rend(); ++rit)
@@ -68,29 +68,33 @@ std::string get_file_path(const std::string& filename)
 
   if (rit != filename.rend()) {
     ++rit;
-    std::copy(filename.begin(), std::string::const_iterator(rit.base()), std::back_inserter(res));
+    std::copy(filename.begin(),
+              std::string_view::const_iterator(rit.base()),
+              std::back_inserter(res));
   }
 
   return res;
 }
 
-std::string get_file_name(const std::string& filename)
+std::string get_file_name(const std::string_view filename)
 {
-  std::string::const_reverse_iterator rit;
+  std::string_view::const_reverse_iterator rit;
   std::string result;
 
   for (rit = filename.rbegin(); rit != filename.rend(); ++rit)
     if (is_path_separator(*rit))
       break;
 
-  std::copy(std::string::const_iterator(rit.base()), filename.end(), std::back_inserter(result));
+  std::copy(std::string_view::const_iterator(rit.base()),
+            filename.end(),
+            std::back_inserter(result));
 
   return result;
 }
 
-std::string get_file_extension(const std::string& filename)
+std::string get_file_extension(const std::string_view filename)
 {
-  std::string::const_reverse_iterator rit;
+  std::string_view::const_reverse_iterator rit;
   std::string result;
 
   // search for the first dot from the end of the string
@@ -102,15 +106,17 @@ std::string get_file_extension(const std::string& filename)
   }
 
   if (rit != filename.rend()) {
-    std::copy(std::string::const_iterator(rit.base()), filename.end(), std::back_inserter(result));
+    std::copy(std::string_view::const_iterator(rit.base()),
+              filename.end(),
+              std::back_inserter(result));
   }
 
   return result;
 }
 
-std::string replace_extension(const std::string& filename, const std::string& extension)
+std::string replace_extension(const std::string_view filename, const std::string_view extension)
 {
-  std::string::const_reverse_iterator rit;
+  std::string_view::const_reverse_iterator rit;
   std::string result;
 
   // Search for the first dot from the end of the string.
@@ -127,7 +133,7 @@ std::string replace_extension(const std::string& filename, const std::string& ex
   }
 
   if (rit != filename.rend()) {
-    auto it = std::string::const_iterator(rit.base());
+    auto it = std::string_view::const_iterator(rit.base());
     --it;
     std::copy(filename.begin(), it, std::back_inserter(result));
   }
@@ -143,10 +149,10 @@ std::string replace_extension(const std::string& filename, const std::string& ex
   return result;
 }
 
-std::string get_file_title(const std::string& filename)
+std::string get_file_title(const std::string_view filename)
 {
-  std::string::const_reverse_iterator rit;
-  std::string::const_iterator last_dot = filename.end();
+  std::string_view::const_reverse_iterator rit;
+  std::string_view::const_iterator last_dot = filename.end();
   std::string result;
 
   for (rit = filename.rbegin(); rit != filename.rend(); ++rit) {
@@ -156,7 +162,7 @@ std::string get_file_title(const std::string& filename)
       last_dot = rit.base() - 1;
   }
 
-  for (std::string::const_iterator it(rit.base()); it != filename.end(); ++it) {
+  for (std::string_view::const_iterator it(rit.base()); it != filename.end(); ++it) {
     if (it == last_dot)
       break;
     result.push_back(*it);
@@ -165,29 +171,30 @@ std::string get_file_title(const std::string& filename)
   return result;
 }
 
-std::string get_file_title_with_path(const std::string& filename)
+std::string get_file_title_with_path(const std::string_view filename)
 {
-  std::string::const_reverse_iterator rit;
+  std::string_view::const_reverse_iterator rit;
 
   // search for the first dot from the end of the string
   for (rit = filename.rbegin(); rit != filename.rend(); ++rit) {
     if (is_path_separator(*rit))
-      return filename;
+      return std::string(filename);
     if (*rit == '.')
       break;
   }
 
   if (rit != filename.rend())
-    return filename.substr(0, rit.base() - filename.begin() - 1);
-  return filename;
+    return std::string(filename.substr(0, rit.base() - filename.begin() - 1));
+
+  return std::string(filename);
 }
 
-std::string get_relative_path(const std::string& filename, const std::string& base_path)
+std::string get_relative_path(const std::string_view filename, const std::string_view base_path)
 {
-  std::vector<std::string> baseDirs;
+  std::vector<std::string_view> baseDirs;
   split_string(base_path, baseDirs, path_separators);
 
-  std::vector<std::string> toParts;
+  std::vector<std::string_view> toParts;
   split_string(filename, toParts, path_separators);
 
   // Find the common prefix
@@ -201,7 +208,7 @@ std::string get_relative_path(const std::string& filename, const std::string& ba
 
   if (itFrom == baseDirs.begin() && itTo == toParts.begin()) {
     // No common prefix
-    return filename;
+    return filename.data();
   }
 
   // Calculate the number of directories to go up from base path
@@ -216,7 +223,7 @@ std::string get_relative_path(const std::string& filename, const std::string& ba
   return relativePath;
 }
 
-std::string join_path(const std::string& path, const std::string& file)
+std::string join_path(const std::string_view path, const std::string_view file)
 {
   std::string result(path);
 
@@ -229,7 +236,7 @@ std::string join_path(const std::string& path, const std::string& file)
   return result;
 }
 
-std::string remove_path_separator(const std::string& path)
+std::string remove_path_separator(const std::string_view path)
 {
   std::string result(path);
 
@@ -240,7 +247,7 @@ std::string remove_path_separator(const std::string& path)
   return result;
 }
 
-std::string fix_path_separators(const std::string& filename)
+std::string fix_path_separators(const std::string_view filename)
 {
   std::string result;
   result.reserve(filename.size());
@@ -272,7 +279,7 @@ std::string fix_path_separators(const std::string& filename)
 
 // It tries to replicate the standard path::lexically_normal()
 // algorithm from https://en.cppreference.com/w/cpp/filesystem/path
-std::string normalize_path(const std::string& _path)
+std::string normalize_path(const std::string_view _path)
 {
   // Normal form of an empty path is an empty path.
   if (_path.empty())
@@ -330,18 +337,18 @@ std::string normalize_path(const std::string& _path)
   return (fn.empty() ? "." : fn);
 }
 
-bool has_file_extension(const std::string& filename, const base::paths& extensions)
+bool has_file_extension(const std::string_view filename, const base::paths& extensions)
 {
   if (!filename.empty()) {
     const std::string ext = get_file_extension(filename);
-    for (const auto& e : extensions)
+    for (const auto e : extensions)
       if (utf8_icmp(ext, e) == 0)
         return true;
   }
   return false;
 }
 
-int compare_filenames(const std::string& a, const std::string& b)
+int compare_filenames(const std::string_view a, const std::string_view b)
 {
   utf8_decode a_dec(a), b_dec(b);
 

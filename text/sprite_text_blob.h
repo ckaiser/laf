@@ -47,11 +47,11 @@ public:
 
   void visitRuns(const RunVisitor& visitor) override;
 
-  static TextBlobRef Make(const FontRef& font, const std::string& text);
+  static TextBlobRef Make(const FontRef& font, const std::string_view text);
 
   static TextBlobRef MakeWithShaper(const FontMgrRef& fontMgr,
                                     const FontRef& font,
-                                    const std::string& text,
+                                    const std::string_view text,
                                     TextBlob::RunHandler* handler);
 
   const FontRef& font() const { return m_font; }

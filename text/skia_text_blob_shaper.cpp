@@ -114,7 +114,7 @@ private:
 
 TextBlobRef SkiaTextBlob::MakeWithShaper(const FontMgrRef& fontMgr,
                                          const FontRef& font,
-                                         const std::string& text,
+                                         const std::string_view text,
                                          TextBlob::RunHandler* handler,
                                          const ShaperFeatures features)
 {
@@ -127,13 +127,13 @@ TextBlobRef SkiaTextBlob::MakeWithShaper(const FontMgrRef& fontMgr,
   sk_sp<SkTextBlob> textBlob;
   gfx::RectF bounds;
   if (auto shaper = SkShaper::Make(skFontMgr)) {
-    ShaperRunHandler shaperHandler(text.c_str(), { 0, 0 }, handler);
+    ShaperRunHandler shaperHandler(text.data(), { 0, 0 }, handler);
 
-    auto bidiRun = SkShaper::MakeBiDiRunIterator(text.c_str(), text.size(), 0xfe);
+    auto bidiRun = SkShaper::MakeBiDiRunIterator(text.data(), text.size(), 0xfe);
     constexpr SkFourByteTag tag = SkSetFourByteTag('Z', 'y', 'y', 'y');
-    auto scriptRun = SkShaper::MakeScriptRunIterator(text.c_str(), text.size(), tag);
-    auto languageRun = SkShaper::MakeStdLanguageRunIterator(text.c_str(), text.size());
-    auto fontRun = SkShaper::MakeFontMgrRunIterator(text.c_str(),
+    auto scriptRun = SkShaper::MakeScriptRunIterator(text.data(), text.size(), tag);
+    auto languageRun = SkShaper::MakeStdLanguageRunIterator(text.data(), text.size());
+    auto fontRun = SkShaper::MakeFontMgrRunIterator(text.data(),
                                                     text.size(),
                                                     skFont,
                                                     skFontMgr,
@@ -146,7 +146,7 @@ TextBlobRef SkiaTextBlob::MakeWithShaper(const FontMgrRef& fontMgr,
       ft.emplace_back(SkShaper::Feature{ SkSetFourByteTag('l', 'i', 'g', 'a'), 0, 0, text.size() });
     }
 
-    shaper->shape(text.c_str(),
+    shaper->shape(text.data(),
                   text.size(),
                   *fontRun,
                   *bidiRun,
@@ -161,7 +161,7 @@ TextBlobRef SkiaTextBlob::MakeWithShaper(const FontMgrRef& fontMgr,
     bounds = shaperHandler.bounds();
   }
   else {
-    textBlob = SkTextBlob::MakeFromText(text.c_str(), text.size(), skFont, SkTextEncoding::kUTF8);
+    textBlob = SkTextBlob::MakeFromText(text.data(), text.size(), skFont, SkTextEncoding::kUTF8);
   }
 
   if (textBlob)

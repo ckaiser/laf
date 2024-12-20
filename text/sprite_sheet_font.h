@@ -52,7 +52,7 @@ public:
 
   int height() const override { return getCharBounds(' ').h; }
 
-  int textLength(const std::string& str) const override
+  int textLength(const std::string_view str) const override
   {
     base::utf8_decode decode(str);
     int x = 0;
@@ -61,7 +61,7 @@ public:
     return x;
   }
 
-  float measureText(const std::string& str,
+  float measureText(const std::string_view str,
                     gfx::RectF* bounds,
                     const os::Paint* paint) const override
   {

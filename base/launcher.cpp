@@ -63,12 +63,12 @@ static int win32_shell_execute(const wchar_t* verb, const wchar_t* file, const w
 
 namespace base { namespace launcher {
 
-bool open_url(const std::string& url)
+bool open_url(const std::string_view url)
 {
   return open_file(url);
 }
 
-bool open_file(const std::string& file)
+bool open_file(const std::string_view file)
 {
   int ret = -1;
 
@@ -78,10 +78,10 @@ bool open_file(const std::string& file)
 
 #elif HAVE_SYSTEM
 
-  #if __APPLE__
-  ret = std::system(("open \"" + file + "\"").c_str());
+  #if __APPLE__ // TODO: JNo copies
+  ret = std::system(("open \"" + std::string(file) + "\"").c_str());
   #else
-  ret = std::system(("setsid xdg-open \"" + file + "\"").c_str());
+  ret = std::system(("setsid xdg-open \"" + std::string(file) + "\"").c_str());
   #endif
 
 #endif
@@ -89,7 +89,7 @@ bool open_file(const std::string& file)
   return (ret == 0);
 }
 
-bool open_folder(const std::string& _file)
+bool open_folder(const std::string_view _file)
 {
   std::string file = base::fix_path_separators(_file);
 

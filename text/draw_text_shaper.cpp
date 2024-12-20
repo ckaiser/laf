@@ -31,7 +31,7 @@ namespace {
 class AdapterBuilder : public TextBlob::RunHandler {
 public:
   AdapterBuilder(os::Surface* surface,
-                 const std::string& text,
+                 const std::string_view text,
                  gfx::Color fg,
                  gfx::Color bg,
                  const gfx::PointF& origin,
@@ -69,7 +69,7 @@ public:
           utf8End = (i == 0 ? info.utf8Range.end : info.utf8Range.begin + info.clusters[i - 1]);
         }
 
-        const std::string utf8text = m_text.substr(utf8Begin, utf8End - utf8Begin);
+        const std::string_view utf8text = m_text.substr(utf8Begin, utf8End - utf8Begin);
 
         gfx::RectF bounds = info.getGlyphBounds(i);
         bounds.offset(m_origin);
@@ -145,7 +145,7 @@ public:
 
 private:
   os::Surface* m_surface;
-  const std::string& m_text;
+  const std::string_view m_text;
   gfx::Color m_fg;
   gfx::Color m_bg;
   gfx::PointF m_origin;
@@ -157,7 +157,7 @@ private:
 gfx::Rect draw_text(os::Surface* surface,
                     const FontMgrRef& fontMgr,
                     const FontRef& font,
-                    const std::string& text,
+                    const std::string_view text,
                     gfx::Color fg,
                     gfx::Color bg,
                     int x,
@@ -195,7 +195,7 @@ gfx::Rect draw_text(os::Surface* surface,
 void draw_text_with_shaper(os::Surface* surface,
                            const FontMgrRef& fontMgr,
                            const FontRef& font,
-                           const std::string& text,
+                           const std::string_view text,
                            gfx::PointF pos,
                            const os::Paint* paint,
                            const TextAlign textAlign)

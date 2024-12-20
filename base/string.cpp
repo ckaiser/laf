@@ -85,7 +85,7 @@ std::string string_vprintf(const char* format, va_list ap)
   return std::string(buf.data());
 }
 
-std::string string_to_lower(const std::string& original)
+std::string string_to_lower(const std::string_view original)
 {
   std::wstring result(from_utf8(original));
   auto it(result.begin());
@@ -97,7 +97,7 @@ std::string string_to_lower(const std::string& original)
   return to_utf8(result);
 }
 
-std::string string_to_upper(const std::string& original)
+std::string string_to_upper(const std::string_view original)
 {
   std::wstring result(from_utf8(original));
   auto it(result.begin());
@@ -157,16 +157,16 @@ std::string to_utf8(const wchar_t* src, const size_t n)
   return std::string(&buf[0]);
 }
 
-std::wstring from_utf8(const std::string& src)
+std::wstring from_utf8(const std::string_view src)
 {
-  int required_size = MultiByteToWideChar(CP_UTF8, 0, src.c_str(), (int)src.size(), NULL, 0);
+  int required_size = MultiByteToWideChar(CP_UTF8, 0, src.data(), (int)src.size(), NULL, 0);
 
   if (required_size == 0)
     return std::wstring();
 
   std::vector<wchar_t> buf(++required_size);
 
-  ::MultiByteToWideChar(CP_UTF8, 0, src.c_str(), (int)src.size(), &buf[0], required_size);
+  ::MultiByteToWideChar(CP_UTF8, 0, src.data(), (int)src.size(), &buf[0], required_size);
 
   return std::wstring(&buf[0]);
 }
@@ -192,7 +192,7 @@ std::string to_utf8(const wchar_t* src, const size_t n)
   return result;
 }
 
-std::wstring from_utf8(const std::string& src)
+std::wstring from_utf8(const std::string_view src)
 {
   int required_size = utf8_length(src);
   std::vector<wchar_t> buf(++required_size);
@@ -213,7 +213,7 @@ std::wstring from_utf8(const std::string& src)
 
 #endif
 
-int utf8_length(const std::string& utf8string)
+int utf8_length(const std::string_view utf8string)
 {
   utf8_decode decode(utf8string);
   int c = 0;
@@ -224,8 +224,22 @@ int utf8_length(const std::string& utf8string)
   return c;
 }
 
-int utf8_icmp(const std::string& a, const std::string& b, int n)
+int utf8_icmp(const std::string_view a, const std::string_view b, int n)
 {
+  // Do a fast size comparison before the loop
+  if (n == 0) {
+    if (a.size() < b.size())
+      return -1;
+    if (b.size() < a.size())
+      return 1;
+  }
+  else {
+    if (a.size() < n && b.size() >= n)
+      return -1;
+    if (b.size() < n && a.size() >= n)
+      return 1;
+  }
+
   utf8_decode a_decode(a);
   utf8_decode b_decode(b);
   int i = 0;

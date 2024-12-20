@@ -22,7 +22,7 @@ class DefaultShaper {
 public:
   using Glyph = typename FaceFT::Glyph;
 
-  DefaultShaper(FaceFT& face, const std::string& str)
+  DefaultShaper(FaceFT& face, const std::string_view str)
     : m_face(face)
     , m_begin(str.begin())
     , m_decode(str)
@@ -54,8 +54,8 @@ public:
 
 private:
   FaceFT& m_face;
-  std::string::const_iterator m_begin;
-  std::string::const_iterator m_pos;
+  std::string_view::const_iterator m_begin;
+  std::string_view::const_iterator m_pos;
   base::utf8_decode m_decode;
   base::codepoint_t m_char = 0;
 };

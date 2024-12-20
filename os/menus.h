@@ -66,7 +66,7 @@ using MenusRef = Ref<Menus>;
 class MenuItem : public RefCount {
 public:
   virtual ~MenuItem() {}
-  virtual void setText(const std::string& text) = 0;
+  virtual void setText(const std::string_view text) = 0;
   virtual void setSubmenu(const MenuRef& submenu) = 0;
   virtual void setEnabled(bool state) = 0;
   virtual void setChecked(bool state) = 0;

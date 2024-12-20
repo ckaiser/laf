@@ -70,16 +70,16 @@ int FreeTypeFont::height() const
   return int(m_face.height());
 }
 
-int FreeTypeFont::textLength(const std::string& str) const
+int FreeTypeFont::textLength(const std::string_view str) const
 {
-  return ft::calc_text_bounds(m_face, str).w;
+  return ft::calc_text_bounds(m_face, str.data()).w;
 }
 
-float FreeTypeFont::measureText(const std::string& str,
+float FreeTypeFont::measureText(const std::string_view str,
                                 gfx::RectF* outBounds,
                                 const os::Paint*) const
 {
-  auto bounds = ft::calc_text_bounds(m_face, str);
+  auto bounds = ft::calc_text_bounds(m_face, str.data());
   if (outBounds)
     *outBounds = bounds;
   return bounds.w;

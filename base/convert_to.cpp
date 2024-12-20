@@ -26,6 +26,12 @@ int convert_to(const std::string& from)
 }
 
 template<>
+int convert_to(const std::string_view& from)
+{
+    return std::strtol(from.data(), NULL, 10);
+}
+
+template<>
 std::string convert_to(const int& from)
 {
   char buf[32];
@@ -51,6 +57,20 @@ template<>
 double convert_to(const std::string& from)
 {
   return std::strtod(from.c_str(), NULL);
+}
+
+template<>
+double convert_to(const std::string_view& from)
+{
+  return std::strtod(from.data(), NULL);
+}
+
+template<>
+std::string_view convert_to(const double& from)
+{
+  char buf[32];
+  std::snprintf(buf, sizeof(buf), "%g", from);
+  return buf;
 }
 
 template<>

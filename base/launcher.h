@@ -12,9 +12,9 @@
 
 namespace base { namespace launcher {
 
-bool open_url(const std::string& url);
-bool open_file(const std::string& file);
-bool open_folder(const std::string& file);
+bool open_url(const std::string_view url);
+bool open_file(const std::string_view file);
+bool open_folder(const std::string_view file);
 
 }} // namespace base::launcher
 

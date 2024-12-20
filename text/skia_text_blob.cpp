@@ -46,7 +46,7 @@ void SkiaTextBlob::visitRuns(const RunVisitor& visitor)
   }
 }
 
-TextBlobRef SkiaTextBlob::Make(const FontRef& font, const std::string& text)
+TextBlobRef SkiaTextBlob::Make(const FontRef& font, const std::string_view& text)
 {
   ASSERT(font);
   ASSERT(font->type() == FontType::Native);
@@ -54,7 +54,7 @@ TextBlobRef SkiaTextBlob::Make(const FontRef& font, const std::string& text)
 
   SkFont skFont = static_cast<SkiaFont*>(font.get())->skFont();
   sk_sp<SkTextBlob> textBlob;
-  textBlob = SkTextBlob::MakeFromText(text.c_str(), text.size(), skFont, SkTextEncoding::kUTF8);
+  textBlob = SkTextBlob::MakeFromText(text.data(), text.size(), skFont, SkTextEncoding::kUTF8);
   if (textBlob)
     return base::make_ref<SkiaTextBlob>(textBlob);
 

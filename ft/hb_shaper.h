@@ -20,7 +20,7 @@ namespace ft {
 template<typename HBFace>
 class HBShaper {
 public:
-  HBShaper(HBFace& face, const std::string& str) : m_face(face)
+  HBShaper(HBFace& face, const std::string_view str) : m_face(face)
   {
     base::utf8_decode decode(str);
     if (decode.is_end())

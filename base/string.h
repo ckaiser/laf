@@ -21,8 +21,8 @@ namespace base {
 std::string string_printf(const char* format, ...);
 std::string string_vprintf(const char* format, std::va_list ap);
 
-std::string string_to_lower(const std::string& original);
-std::string string_to_upper(const std::string& original);
+std::string string_to_lower(const std::string_view original);
+std::string string_to_upper(const std::string_view original);
 
 std::string codepoint_to_utf8(codepoint_t codepoint);
 codepoint_t utf16_to_codepoint(uint16_t low, uint16_t hi);
@@ -34,10 +34,10 @@ inline std::string to_utf8(const std::wstring& widestring)
   return to_utf8(widestring.c_str(), widestring.size());
 }
 
-std::wstring from_utf8(const std::string& utf8string);
+std::wstring from_utf8(const std::string_view utf8string);
 
-int utf8_length(const std::string& utf8string);
-int utf8_icmp(const std::string& a, const std::string& b, int n = 0);
+int utf8_length(const std::string_view utf8string);
+int utf8_icmp(const std::string_view a, const std::string_view b, int n = 0);
 
 } // namespace base
 

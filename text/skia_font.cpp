@@ -67,17 +67,17 @@ int SkiaFont::height() const
   return m_skFont.getMetrics(nullptr);
 }
 
-int SkiaFont::textLength(const std::string& str) const
+int SkiaFont::textLength(const std::string_view str) const
 {
-  return std::ceil(m_skFont.measureText(str.c_str(), str.size(), SkTextEncoding::kUTF8, nullptr));
+  return std::ceil(m_skFont.measureText(str.data(), str.size(), SkTextEncoding::kUTF8, nullptr));
 }
 
-float SkiaFont::measureText(const std::string& str,
+float SkiaFont::measureText(const std::string_view str,
                             gfx::RectF* outBounds,
                             const os::Paint* paint) const
 {
   SkRect bounds;
-  float width = m_skFont.measureText(str.c_str(),
+  float width = m_skFont.measureText(str.data(),
                                      str.size(),
                                      SkTextEncoding::kUTF8,
                                      &bounds,

@@ -35,6 +35,11 @@ template<>
 std::string convert_to(const int& from);
 
 template<>
+int convert_to(const std::string_view& from);
+template<>
+std::string_view convert_to(const int& from);
+
+template<>
 uint32_t convert_to(const std::string& from);
 template<>
 std::string convert_to(const uint32_t& from);
@@ -43,6 +48,11 @@ template<>
 double convert_to(const std::string& from);
 template<>
 std::string convert_to(const double& from);
+
+template<>
+double convert_to(const std::string_view& from);
+template<>
+std::string_view convert_to(const double& from);
 
 template<>
 Sha1 convert_to(const std::string& from);

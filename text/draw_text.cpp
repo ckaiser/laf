@@ -37,7 +37,7 @@ namespace text {
 
 void draw_text(os::Surface* surface,
                const FontRef& font,
-               const std::string& text,
+               const std::string_view text,
                gfx::PointF pos,
                const os::Paint* paint,
                const TextAlign textAlign)

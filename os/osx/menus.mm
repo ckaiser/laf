@@ -40,7 +40,7 @@ class MenuItemOSX : public MenuItem {
 public:
   MenuItemOSX(const MenuItemInfo& info);
   ~MenuItemOSX();
-  void setText(const std::string& text) override;
+  void setText(const std::string_view text) override;
   void setSubmenu(const MenuRef& submenu) override;
   void setEnabled(bool state) override;
   void setChecked(bool state) override;
@@ -184,9 +184,9 @@ MenuItemOSX::~MenuItemOSX()
   }
 }
 
-void MenuItemOSX::setText(const std::string& text)
+void MenuItemOSX::setText(const std::string_view text)
 {
-  [m_handle setTitle:[NSString stringWithUTF8String:text.c_str()]];
+  [m_handle setTitle:[NSString stringWithUTF8String:text.data()]];
   syncTitle();
 }
 

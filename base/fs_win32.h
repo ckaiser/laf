@@ -19,7 +19,7 @@
 
 namespace base {
 
-bool is_file(const std::string& path)
+bool is_file(const std::string_view path)
 {
   DWORD attr = ::GetFileAttributes(from_utf8(path).c_str());
 
@@ -28,7 +28,7 @@ bool is_file(const std::string& path)
   return ((attr != INVALID_FILE_ATTRIBUTES) && !(attr & FILE_ATTRIBUTE_DIRECTORY));
 }
 
-bool is_directory(const std::string& path)
+bool is_directory(const std::string_view path)
 {
   DWORD attr = ::GetFileAttributes(from_utf8(path).c_str());
 
@@ -36,34 +36,34 @@ bool is_directory(const std::string& path)
           ((attr & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY));
 }
 
-size_t file_size(const std::string& path)
+size_t file_size(const std::string_view path)
 {
   struct _stat sts;
   return (_wstat(from_utf8(path).c_str(), &sts) == 0) ? sts.st_size : 0;
 }
 
-void move_file(const std::string& src, const std::string& dst)
+void move_file(const std::string_view src, const std::string& dst)
 {
   BOOL result = ::MoveFile(from_utf8(src).c_str(), from_utf8(dst).c_str());
   if (result == 0)
     throw Win32Exception("Error moving file");
 }
 
-void copy_file(const std::string& src, const std::string& dst, bool overwrite)
+void copy_file(const std::string_view src, const std::string_view dst, bool overwrite)
 {
   BOOL result = ::CopyFile(from_utf8(src).c_str(), from_utf8(dst).c_str(), !overwrite);
   if (result == 0)
     throw Win32Exception("Error copying file");
 }
 
-void delete_file(const std::string& path)
+void delete_file(const std::string_view path)
 {
   BOOL result = ::DeleteFile(from_utf8(path).c_str());
   if (result == 0)
     throw Win32Exception("Error deleting file");
 }
 
-bool has_readonly_attr(const std::string& path)
+bool has_readonly_attr(const std::string_view path)
 {
   DWORD attr = ::GetFileAttributes(from_utf8(path).c_str());
 
@@ -71,7 +71,7 @@ bool has_readonly_attr(const std::string& path)
           ((attr & FILE_ATTRIBUTE_READONLY) == FILE_ATTRIBUTE_READONLY));
 }
 
-void remove_readonly_attr(const std::string& path)
+void remove_readonly_attr(const std::string_view path)
 {
   std::wstring fn = from_utf8(path);
   DWORD attr = ::GetFileAttributes(fn.c_str());
@@ -82,7 +82,7 @@ void remove_readonly_attr(const std::string& path)
   }
 }
 
-Time get_modification_time(const std::string& path)
+Time get_modification_time(const std::string_view path)
 {
   WIN32_FILE_ATTRIBUTE_DATA data;
   ZeroMemory(&data, sizeof(data));
@@ -98,14 +98,14 @@ Time get_modification_time(const std::string& path)
   return Time(local.wYear, local.wMonth, local.wDay, local.wHour, local.wMinute, local.wSecond);
 }
 
-void make_directory(const std::string& path)
+void make_directory(const std::string_view path)
 {
   BOOL result = ::CreateDirectory(from_utf8(path).c_str(), NULL);
   if (result == 0)
     throw Win32Exception("Error creating directory");
 }
 
-void remove_directory(const std::string& path)
+void remove_directory(const std::string_view path)
 {
   BOOL result = ::RemoveDirectory(from_utf8(path).c_str());
   if (result == 0)
@@ -120,7 +120,7 @@ std::string get_current_path()
   return std::string();
 }
 
-void set_current_path(const std::string& path)
+void set_current_path(const std::string_view path)
 {
   ::SetCurrentDirectory(from_utf8(path).c_str());
 }
@@ -149,7 +149,7 @@ std::string get_user_docs_folder()
   return std::string();
 }
 
-std::string get_canonical_path(const std::string& path)
+std::string get_canonical_path(const std::string_view path)
 {
   std::string full = get_absolute_path(path);
   DWORD attr = ::GetFileAttributes(from_utf8(full).c_str());
@@ -158,7 +158,7 @@ std::string get_canonical_path(const std::string& path)
   return std::string();
 }
 
-std::string get_absolute_path(const std::string& path)
+std::string get_absolute_path(const std::string_view path)
 {
   std::string full;
   if (path.size() > 2 && path[1] != ':')
@@ -171,7 +171,7 @@ std::string get_absolute_path(const std::string& path)
   return to_utf8(buffer);
 }
 
-paths list_files(const std::string& path, ItemType filter, const std::string& match)
+paths list_files(const std::string_view path, ItemType filter, const std::string_view match)
 {
   WIN32_FIND_DATA fd;
   paths files;
@@ -204,7 +204,7 @@ paths list_files(const std::string& path, ItemType filter, const std::string& ma
   return files;
 }
 
-Version get_file_version(const std::string& filename)
+Version get_file_version(const std::string_view filename)
 {
   return get_file_version(from_utf8(filename).c_str());
 }

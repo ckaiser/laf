@@ -36,48 +36,48 @@
 
 namespace base {
 
-bool is_file(const std::string& path)
+bool is_file(const std::string_view path)
 {
   struct stat sts;
-  return (stat(path.c_str(), &sts) == 0 && S_ISREG(sts.st_mode)) ? true : false;
+  return (stat(path.data(), &sts) == 0 && S_ISREG(sts.st_mode)) ? true : false;
 }
 
-bool is_directory(const std::string& path)
+bool is_directory(const std::string_view path)
 {
   struct stat sts;
-  return (stat(path.c_str(), &sts) == 0 && S_ISDIR(sts.st_mode)) ? true : false;
+  return (stat(path.data(), &sts) == 0 && S_ISDIR(sts.st_mode)) ? true : false;
 }
 
-void make_directory(const std::string& path)
+void make_directory(const std::string_view path)
 {
-  int result = mkdir(path.c_str(), 0777);
+  int result = mkdir(path.data(), 0777);
   if (result != 0) {
     throw std::runtime_error("Error creating directory: " + std::string(std::strerror(errno)));
   }
 }
 
-size_t file_size(const std::string& path)
+size_t file_size(const std::string_view path)
 {
   struct stat sts;
-  return (stat(path.c_str(), &sts) == 0) ? sts.st_size : 0;
+  return (stat(path.data(), &sts) == 0) ? sts.st_size : 0;
 }
 
-void move_file(const std::string& src, const std::string& dst)
+void move_file(const std::string_view src, const std::string_view dst)
 {
-  int result = std::rename(src.c_str(), dst.c_str());
+  int result = std::rename(src.data(), dst.data());
   if (result != 0)
     throw std::runtime_error("Error moving file: " + std::string(std::strerror(errno)));
 }
 
-void copy_file(const std::string& src_fn, const std::string& dst_fn, const bool overwrite)
+void copy_file(const std::string_view src_fn, const std::string_view dst_fn, const bool overwrite)
 {
   // First copy the file content
-  FileHandle src = open_file(src_fn, "rb");
+  FileHandle src = open_file(src_fn.data(), "rb");
   if (!src) {
     throw std::runtime_error("Cannot open source file " + std::string(std::strerror(errno)));
   }
 
-  FileHandle dst = open_file(dst_fn, "wb");
+  FileHandle dst = open_file(dst_fn.data(), "wb");
   if (!dst) {
     throw std::runtime_error("Cannot open destination file " + std::string(std::strerror(errno)));
   }
@@ -91,49 +91,49 @@ void copy_file(const std::string& src_fn, const std::string& dst_fn, const bool 
 
   // Now copy file attributes (mode and owner)
   struct stat sts;
-  stat(src_fn.c_str(), &sts);
+  stat(src_fn.data(), &sts);
   fchmod(fileno(dst.get()), sts.st_mode);
   fchown(fileno(dst.get()), sts.st_uid, sts.st_gid);
 
   // Check that the output file has the same mode and owner
 #if _DEBUG
   struct stat sts2;
-  stat(dst_fn.c_str(), &sts2);
+  stat(dst_fn.data(), &sts2);
   ASSERT(sts.st_mode == sts2.st_mode);
   ASSERT(sts.st_uid == sts2.st_uid);
   ASSERT(sts.st_gid == sts2.st_gid);
 #endif
 }
 
-void delete_file(const std::string& path)
+void delete_file(const std::string_view path)
 {
-  int result = unlink(path.c_str());
+  int result = unlink(path.data());
   if (result != 0)
     throw std::runtime_error("Error deleting file: " + std::string(std::strerror(errno)));
 }
 
-bool has_readonly_attr(const std::string& path)
+bool has_readonly_attr(const std::string_view path)
 {
   struct stat sts;
-  return (stat(path.c_str(), &sts) == 0 && ((sts.st_mode & S_IWUSR) == 0));
+  return (stat(path.data(), &sts) == 0 && ((sts.st_mode & S_IWUSR) == 0));
 }
 
-void remove_readonly_attr(const std::string& path)
+void remove_readonly_attr(const std::string_view path)
 {
   struct stat sts;
-  int result = stat(path.c_str(), &sts);
+  int result = stat(path.data(), &sts);
   if (result == 0) {
-    result = chmod(path.c_str(), sts.st_mode | S_IWUSR);
+    result = chmod(path.data(), sts.st_mode | S_IWUSR);
     if (result != 0)
       throw std::runtime_error("Error removing read-only attribute: " +
                                std::string(std::strerror(errno)));
   }
 }
 
-Time get_modification_time(const std::string& path)
+Time get_modification_time(const std::string_view path)
 {
   struct stat sts;
-  int result = stat(path.c_str(), &sts);
+  int result = stat(path.data(), &sts);
   if (result != 0)
     return Time();
 
@@ -142,9 +142,9 @@ Time get_modification_time(const std::string& path)
   return Time(t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec);
 }
 
-void remove_directory(const std::string& path)
+void remove_directory(const std::string_view path)
 {
-  int result = rmdir(path.c_str());
+  int result = rmdir(path.data());
   if (result != 0)
     throw std::runtime_error("Error removing directory: " + std::string(std::strerror(errno)));
 }
@@ -157,7 +157,7 @@ std::string get_current_path()
   return std::string();
 }
 
-void set_current_path(const std::string& path)
+void set_current_path(const std::string_view path)
 {
   chdir(path.data());
 }
@@ -199,20 +199,20 @@ std::string get_user_docs_folder()
   return "/";
 }
 
-std::string get_canonical_path(const std::string& path)
+std::string get_canonical_path(const std::string_view path)
 {
   const std::string full = get_absolute_path(path);
   char buffer[PATH_MAX];
   // Ignore return value as realpath() returns nullptr anyway when the
   // resolved_path parameter is specified.
-  if (realpath(full.c_str(), buffer))
+  if (realpath(full.data(), buffer))
     return buffer; // No error, the file/dir exists
   return std::string();
 }
 
-std::string get_absolute_path(const std::string& path)
+std::string get_absolute_path(const std::string_view path)
 {
-  std::string full = path;
+  std::string full(path);
   if (!full.empty() && full[0] != '/')
     full = join_path(get_current_path(), full);
   full = normalize_path(full);
@@ -221,10 +221,10 @@ std::string get_absolute_path(const std::string& path)
   return full;
 }
 
-paths list_files(const std::string& path, ItemType filter, const std::string& match)
+paths list_files(const std::string_view path, ItemType filter, const std::string_view match)
 {
   paths files;
-  DIR* handle = opendir(path.c_str());
+  DIR* handle = opendir(path.data());
   if (!handle)
     return files;
 
@@ -240,7 +240,7 @@ paths list_files(const std::string& path, ItemType filter, const std::string& ma
     else if (filter == ItemType::Directories)
       continue;
 
-    if (fnmatch(match.c_str(), item->d_name, FNM_CASEFOLD) == FNM_NOMATCH)
+    if (fnmatch(match.data(), item->d_name, FNM_CASEFOLD) == FNM_NOMATCH)
       continue;
 
     files.push_back(item->d_name);

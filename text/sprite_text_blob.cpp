@@ -93,7 +93,7 @@ void SpriteTextBlob::visitRuns(const RunVisitor& visitor)
   }
 }
 
-TextBlobRef SpriteTextBlob::Make(const FontRef& font, const std::string& text)
+TextBlobRef SpriteTextBlob::Make(const FontRef& font, const std::string_view text)
 {
   ASSERT(font);
   ASSERT(font->type() == FontType::SpriteSheet);

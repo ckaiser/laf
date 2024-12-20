@@ -37,8 +37,8 @@ public:
   virtual TypefaceRef typeface() const = 0;
   virtual float metrics(FontMetrics* metrics) const = 0;
   virtual int height() const = 0;
-  virtual int textLength(const std::string& str) const = 0;
-  virtual float measureText(const std::string& str,
+  virtual int textLength(const std::string_view str) const = 0;
+  virtual float measureText(const std::string_view str,
                             gfx::RectF* bounds,
                             const os::Paint* paint = nullptr) const = 0;
   virtual bool isScalable() const = 0;

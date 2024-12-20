@@ -28,8 +28,8 @@ public:
   TypefaceRef typeface() const override;
   float metrics(FontMetrics* metrics) const override;
   int height() const override;
-  int textLength(const std::string& str) const override;
-  float measureText(const std::string& str,
+  int textLength(const std::string_view str) const override;
+  float measureText(const std::string_view str,
                     gfx::RectF* bounds,
                     const os::Paint* paint) const override;
   bool isScalable() const override;

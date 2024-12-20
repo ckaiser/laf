@@ -82,7 +82,7 @@ gfx::RectF TextBlob::RunInfo::getGlyphBounds(const size_t i) const
   return bounds;
 }
 
-TextBlobRef TextBlob::Make(const FontRef& font, const std::string& text)
+TextBlobRef TextBlob::Make(const FontRef& font, const std::string_view text)
 {
   ASSERT(font);
   switch (font->type()) {

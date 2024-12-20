@@ -60,7 +60,7 @@ private:
 
 TextBlobRef SpriteTextBlob::MakeWithShaper(const FontMgrRef& fontMgr,
                                            const FontRef& font,
-                                           const std::string& text,
+                                           const std::string_view text,
                                            TextBlob::RunHandler* handler)
 {
   ASSERT(font);

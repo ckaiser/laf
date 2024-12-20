@@ -77,7 +77,7 @@ public:
   // Uses Skia's SkTextBlob::MakeFromText() to create the TextBlob,
   // it doesn't depend on HarfBuzz or big dependencies, useful to
   // print English-only text with just the given font as parameter.
-  static TextBlobRef Make(const FontRef& font, const std::string& text);
+  static TextBlobRef Make(const FontRef& font, const std::string_view text);
 
   // Uses SkShaper::Make() to create the text blob (HarfBuzz if
   // available), useful for RTL (right-to-left) languages or when
@@ -91,7 +91,7 @@ public:
   // glyphs.
   static TextBlobRef MakeWithShaper(const FontMgrRef& fontMgr,
                                     const FontRef& font,
-                                    const std::string& text,
+                                    const std::string_view text,
                                     RunHandler* handler = nullptr,
                                     const ShaperFeatures features = {});
 

@@ -16,11 +16,11 @@ namespace base {
 
 class utf8_decode {
 public:
-  using string = std::string;
-  using string_ref = const std::string&;
-  using iterator = std::string::const_iterator;
+  using string = std::string_view;
+  using string_ref = const std::string_view&;
+  using iterator = std::string_view::const_iterator;
 
-  utf8_decode() {}
+  utf8_decode() = default;
   utf8_decode(const utf8_decode&) = default;
   utf8_decode& operator=(const utf8_decode&) = default;
 
