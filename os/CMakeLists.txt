@@ -88,6 +88,13 @@ if(LAF_BACKEND STREQUAL "skia")
 endif()
 
 ######################################################################
+# SDL3 Backend
+
+if(LAF_BACKEND STREQUAL "sdl")
+  list(APPEND LAF_OS_SOURCES
+          sdl/event_queue.cpp
+          sdl/sdl_system.cpp)
+endif()
 
 add_library(laf-os ${LAF_OS_SOURCES})
 target_link_libraries(laf-os laf-gfx laf-base)
@@ -160,6 +167,12 @@ target_link_libraries(laf-os ${LAF_OS_PLATFORM_LIBS})
 
 if(LAF_BACKEND STREQUAL "skia")
   target_link_libraries(laf-os skia)
+endif()
+
+if(LAF_BACKEND STREQUAL "sdl")
+  find_package(sdl3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
+  find_package(sdl3 REQUIRED CONFIG REQUIRED COMPONENTS Headers)
+  target_link_libraries(laf-os SDL3::SDL3 SDL3::Headers)
 endif()
 
 set(_LAF_BACKEND_INITIAL_LINK_FLAGS "")

@@ -46,6 +46,9 @@ SystemRef System::make()
   ASSERT(!g_instance);
 
   SystemRef ref;
+#if LAF_SDL
+  ref = System::makeSdl();
+#endif
 #if LAF_SKIA
   ref = System::makeSkia();
 #endif

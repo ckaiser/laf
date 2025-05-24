@@ -88,6 +88,13 @@ if(LAF_BACKEND STREQUAL "skia")
   target_compile_definitions(laf-base INTERFACE -DHAVE_CONFIG_OVERRIDE_H=1)
 endif()
 
+if(LAF_BACKEND STREQUAL "sdl")
+  target_compile_definitions(laf-base PUBLIC LAF_SDL)
+
+  find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
+  find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS Headers)
+endif()
+
 # Information
 
 message(STATUS "laf backend: ${LAF_BACKEND}")

@@ -9,12 +9,18 @@
   #include "config.h"
 #endif
 
-#if LAF_WINDOWS
-  #include "os/win/event_queue.h"
-#elif LAF_MACOS
-  #include "os/osx/event_queue.h"
-#elif LAF_LINUX
-  #include "os/x11/event_queue.h"
+#if LAF_SDL
+  #include "os/sdl/event_queue.h"
+#else
+
+  #if LAF_WINDOWS
+    #include "os/win/event_queue.h"
+  #elif LAF_MACOS
+    #include "os/osx/event_queue.h"
+  #elif LAF_LINUX
+    #include "os/x11/event_queue.h"
+  #endif
+
 #endif
 
 namespace os {

@@ -73,6 +73,9 @@ public:
 #if LAF_SKIA
   [[nodiscard]] static SystemRef makeSkia();
 #endif
+#if LAF_SDL
+  [[nodiscard]] static SystemRef makeSdl();
+#endif
 
   // The app name is used in several places.
   //
