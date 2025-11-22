@@ -8,6 +8,7 @@
   #include "config.h"
 #endif
 
+#define SDL_MAIN_HANDLED
 #include <SDL3/SDL_log.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3/SDL_render.h>
@@ -260,7 +261,7 @@ public:
   {
     SDL_Rect rect;
     SDL_GetSurfaceClipRect(surface, &rect);
-    ASSERT(rect.w == w && rect.h == h);
+    // ASSERT(rect.w == w && rect.h == h);
     m_w = rect.w;
     m_h = rect.h;
     m_texture =
@@ -289,7 +290,7 @@ public:
   };
   void saveClip() override {};
   void restoreClip() override {};
-  bool clipRect(const gfx::Rect& rc) override {};
+  bool clipRect(const gfx::Rect& rc) override { return false; };
   void clipPath(const gfx::Path& path) override {};
   void clipRegion(const gfx::Region& region) override {};
   void save() override {};
@@ -532,11 +533,17 @@ class SDLWindow : public Window {
 public:
   explicit SDLWindow(const WindowSpec& spec)
   {
+#if LAF_MACOS
+    auto windowSurface = SDL_WINDOW_METAL;
+#else
+    auto windowSurface = SDL_WINDOW_VULKAN;
+#endif
+
     bool r = SDL_CreateWindowAndRenderer(
       "REPLACE ME",
       spec.contentRect().w,
       spec.contentRect().h,
-      SDL_WINDOW_METAL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_INPUT_FOCUS,
+      windowSurface | SDL_WINDOW_RESIZABLE | SDL_WINDOW_INPUT_FOCUS,
       &m_window,
       &m_renderer);
 
@@ -658,7 +665,7 @@ public:
   void captureMouse() override { SDL_CaptureMouse(true); };
   void releaseMouse() override { SDL_CaptureMouse(false); };
   void performWindowAction(WindowAction action, const Event* event) override {};
-  std::string getLayout() override {};
+  std::string getLayout() override { return ""; };
   void setLayout(const std::string& layout) override {};
   void setInterpretOneFingerGestureAsMouseMovement(bool state) override {};
   os::ScreenRef screen() const override { return nullptr; };
